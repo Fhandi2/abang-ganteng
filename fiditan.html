@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Surat Keterangan Domisili Usaha</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+   body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+form {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 420px;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+  color: #333;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+}
+
+button {
+  margin-top: 20px;
+  padding: 12px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  width: 100%;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+
+  form {
+    padding: 20px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.15);
+  }
+
+  input, textarea {
+    font-size: 15px;
+  }
+
+  button {
+    font-size: 15px;
+  }
+}
+  </style>
+</head>
+<body>
+  <h2>FIDITAN</h2>
+  <form id="dataForm">
+    <label>Nama:</label>
+    <input type="text" id="nama" required>
+
+    <label>Tempat & Tanggal Lahir:</label>
+    <input type="text" id="ttl" required>
+
+    <label>Jenis Kelamin:</label>
+    <input type="text" id="jk" required>
+
+    <label>Agama:</label>
+    <input type="text" id="agama" required>
+
+    <label>Status Perkawinan:</label>
+    <input type="text" id="status" required>
+
+    <label>Pekerjaan:</label>
+    <input type="text" id="pekerjaan" required>
+
+    <label>Alamat:</label>
+    <textarea id="alamat" required></textarea>
+
+    <label>Nama Usaha:</label>
+    <input type="text" id="usaha" required>
+
+    <label>RT/RW:</label>
+    <input type="text" id="rtrw" required>
+
+    <label>Kelurahan:</label>
+    <input type="text" id="kelurahan" required>
+
+    <label>Kecamatan:</label>
+    <input type="text" id="kecamatan" required>
+
+    <label>Tanggal Surat:</label>
+    <input type="date" id="tanggal" required>
+
+    <label>Nomor Surat:</label>
+    <input type="text" id="nomorSurat" placeholder="Contoh: 1350/SK.Dom/B/KOF/XI/2025" required>
+
+    <button type="button" onclick="generatePDF()">Generate PDF</button>
+  </form>
+
+  <script>
+    async function generatePDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: "mm", format: "a4" });
+
+      const logoUrl = "https://upload.wikimedia.org/wikipedia/commons/5/58/Logo_kota_tual.jpg";
+      const logoBase64 = await toDataURL(logoUrl);
+      const tanda = "tanda.jpg";
+      const ttd = await toDataURL(tanda);
+
+      const nama = document.getElementById("nama").value;
+      const ttl = document.getElementById("ttl").value;
+      const jk = document.getElementById("jk").value;
+      const agama = document.getElementById("agama").value;
+      const status = document.getElementById("status").value;
+      const pekerjaan = document.getElementById("pekerjaan").value;
+      const alamat = document.getElementById("alamat").value;
+      const usaha = document.getElementById("usaha").value;
+      const rtrw = document.getElementById("rtrw").value;
+      const kelurahan = document.getElementById("kelurahan").value;
+      const kecamatan = document.getElementById("kecamatan").value;
+      const nomorSurat = document.getElementById("nomorSurat").value;
+      const tanggalInput = document.getElementById("tanggal").value;
+
+      // === Konversi format tanggal ===
+      const tanggal = formatTanggalIndonesia(tanggalInput);
+
+      const pejabatNama = "SAYUTI RAHARUSUN";
+      const pejabatNip = "19701104 199303 1 004";
+      const jabatan = "Pj. KEPALA OHOI FIDITAN";
+
+      // === Header Surat ===
+      doc.addImage(logoBase64, "JPEG", 25, 10, 20, 20);
+      doc.setFont("times", "bold");
+      doc.setFontSize(12);
+      doc.text("PEMERINTAH KOTA TUAL", 105, 15, { align: "center" });
+      doc.text("KECAMATAN PULAU DULLAH UTARA", 105, 21, { align: "center" });
+      doc.text("OHOI FIDITAN", 105, 27, { align: "center" });
+
+      doc.setFont("times", "normal");
+      doc.setFontSize(10);
+      doc.text("Alamat Website : http://desafiditan.com/desa", 105, 32, { align: "center" });
+      doc.setLineWidth(0.5);
+      doc.line(20, 35, 190, 35);
+
+      // === Judul ===
+      doc.setFont("times", "bold");
+      doc.setFontSize(12);
+      doc.text("SURAT KETERANGAN DOMISILI USAHA", 105, 45, { align: "center" });
+      const textWidth = doc.getTextWidth("SURAT KETERANGAN DOMISILI USAHA");
+      const startX = 105 - textWidth / 2;
+      const endX = 105 + textWidth / 2;
+      doc.setLineWidth(0.3);
+      doc.line(startX, 46, endX, 46);
+      doc.setFont("times", "normal");
+      doc.text(`Nomor: ${nomorSurat}`, 105, 52, { align: "center" });
+
+      let y = 65;
+      doc.setFontSize(11);
+      doc.text("Yang bertanda tangan di bawah ini:", 20, y);
+      y += 8;
+
+      function addField(label, value, startY) {
+        const col1 = 25;
+        const col2 = 70;
+        const col3 = 75;
+        doc.text(label, col1, startY);
+        doc.text(":", col2, startY);
+        doc.text(value, col3, startY);
+      }
+
+      addField("Nama", pejabatNama, y); y += 6;
+      addField("NIP", pejabatNip, y); y += 6;
+      addField("Jabatan", jabatan, y); y += 10;
+
+      doc.text("Dengan ini menerangkan bahwa:", 20, y);
+      y += 8;
+
+      addField("Nama", nama, y); y += 6;
+      addField("Tempat/Tanggal Lahir", ttl, y); y += 6;
+      addField("Jenis Kelamin", jk, y); y += 6;
+      addField("Agama", agama, y); y += 6;
+      addField("Status Perkawinan", status, y); y += 6;
+      addField("Pekerjaan", pekerjaan, y); y += 6;
+      addField("Alamat", alamat, y); y += 10;
+
+      doc.text(
+        `Yang bersangkutan benar memiliki usaha "${usaha}" di ${kelurahan}, ${rtrw}, Kel. ${kelurahan}, Kec. ${kecamatan}.`,
+        20, y, { maxWidth: 170 }
+      );
+      y += 12;
+      doc.text(`Usaha tersebut telah berjalan dengan baik sampai saat ini.`, 20, y, { maxWidth: 170 });
+      y += 15;
+      doc.text(`Demikian surat keterangan ini dibuat agar dapat digunakan sebagaimana mestinya.`, 20, y, { maxWidth: 170 });
+      y += 20;
+
+      doc.text(`Dikeluarkan di`, 130, y);
+      doc.text(":", 160, y);
+      doc.text("Ohoi Fiditan", 165, y);
+      y += 6;
+      doc.text(`Pada Tanggal`, 130, y);
+      doc.text(":", 160, y);
+      doc.text(tanggal, 165, y);
+      y += 15;
+
+      doc.addImage(ttd, "JPEG", 120, 205, 70, 35);
+      doc.save(`Surat-Domisili-${nama}.pdf`);
+    }
+
+    // === Fungsi ubah tanggal ke format Indonesia ===
+    function formatTanggalIndonesia(dateStr) {
+      const bulan = [
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+      ];
+      const [year, month, day] = dateStr.split("-");
+      return `${day} ${bulan[parseInt(month) - 1]} ${year}`;
+    }
+
+    function toDataURL(url) {
+      return fetch(url)
+        .then(response => response.blob())
+        .then(blob => new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(blob);
+        }));
+    }
+  </script>
+</body>
+</html>
